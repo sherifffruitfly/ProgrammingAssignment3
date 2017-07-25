@@ -11,13 +11,17 @@ best <- function(state, outcome)
     stop("invalid state")
   }
   
-  if (!(is.numeric(outcome)))
+  # design decision: I allow outcomes to be uppercase
+  if (!is.element(tolower(outcome), c("heart attack", "heart failure", "pneumonia")))
   {
     stop("invalid outcome")
-  } else if (!(outcome >= 0)) # tack on more conditions for "validity" on outcome here, as needed
-  {
-    stop("invalid outcome")
-  } 
+  }
+
+  # decide what col # we'll be aggregating
+  agg_col <- switch(tolower(outcome)
+                    , "heart attack" = 3
+                    , "heart failure" = 4
+                    , "pneumonia" = 5)
   
   
   # can write extract to file with:
@@ -50,7 +54,16 @@ best <- function(state, outcome)
                   , na.strings=c("", ".", "NA", "Not Available")
                   , stringsAsFactors = FALSE
                   )
-  str(data)
+  colnames(data) <- c("Hospital", "State", "Heart Attack", "Heart Failure", "Pneumonia")
+  
+  #filter state
+  data <- subset(data, data$State == state)
+  
+  #filter NA
+  data <- subset(data, !is.na(data[,agg_col]))
+  
+  the_one <- data$Hospital[data[,agg_col] == min(data[,agg_col])]
+  the_one
 }
 
 
