@@ -1,7 +1,7 @@
 ## Read outcome data
 ## Check that state and outcome are valid
-## Return hospital name in that state with lowest 30-day death rate
-best <- function(state, outcome)
+## Return hospital name in that state with the given rank for 30-day death rate
+rankhospital <- function(state, outcome, num = "best")
 {
   # valid abbreviations obtained from https://www.infoplease.com/state-abbreviations-and-state-postal-codes
   valid_abbrevs <- c("AL", "AK", "AS", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "GU", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MH", "MA", "MI", "FM", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "MP", "OH", "OK", "OR", "PW", "PA", "PR", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "VI", "WA", "WV", "WI", "WY")
@@ -16,7 +16,7 @@ best <- function(state, outcome)
   {
     stop("invalid outcome")
   }
-
+  
   # decide what col # we'll be aggregating
   agg_col <- switch(tolower(outcome)
                     , "heart attack" = 3
@@ -33,7 +33,7 @@ best <- function(state, outcome)
   # $ Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack : num - col 11
   # $ Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure: num - col 17
   # $ Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia    : num - col 23
-
+  
   myfile <- "outcome-of-care-measures.csv"
   mydir <- "C:\\cdjProgramming\\coursera\\r\\week4"
   mycols <- c("NULL"
@@ -49,11 +49,11 @@ best <- function(state, outcome)
               , rep("NULL", 23))
   setwd(mydir)
   data <- read.csv(myfile
-                  , header = TRUE
-                  , colClasses = mycols
-                  , na.strings=c("", ".", "NA", "Not Available")
-                  , stringsAsFactors = FALSE
-                  )
+                   , header = TRUE
+                   , colClasses = mycols
+                   , na.strings=c("", ".", "NA", "Not Available")
+                   , stringsAsFactors = FALSE
+  )
   colnames(data) <- c("Hospital", "State", "Heart Attack", "Heart Failure", "Pneumonia")
   
   #filter state
@@ -62,8 +62,11 @@ best <- function(state, outcome)
   #filter NA
   data <- subset(data, !is.na(data[,agg_col]))
   
-  the_one <- data$Hospital[data[,agg_col] == min(data[,agg_col])]
-  the_one
+  # DO THE RANKING HERE
+  colnames(data) <- c(colnames(data), "rank")
+  
+  str(data)
+  
 }
 
 
