@@ -1,6 +1,9 @@
 # unit tests for best.R
 # need to test right answers, and error conditions
 
+# usage: test_dir("C:\\cdjProgramming\\coursera\\r\\week4\\ProgrammingAssignment3\\tests\\testthat")
+
+
 source("C:\\cdjProgramming\\coursera\\r\\week4\\ProgrammingAssignment3\\best.R")
 
 context("best.R accuracy")
