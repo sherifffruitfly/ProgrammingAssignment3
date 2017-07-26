@@ -56,17 +56,45 @@ rankhospital <- function(state, outcome, num = "best")
   )
   colnames(data) <- c("Hospital", "State", "Heart Attack", "Heart Failure", "Pneumonia")
   
-  #filter state
+  # filter state
   data <- subset(data, data$State == state)
   
-  #filter NA
+  # filter NA
   data <- subset(data, !is.na(data[,agg_col]))
   
-  # DO THE RANKING HERE
-  colnames(data) <- c(colnames(data), "rank")
+  # sort
+  data <- data[order(data[, agg_col], data$Hospital),]
   
-  str(data)
+  # return the proper row
+  if (length(num) > 0)
+  {
+    switch (class(num[1]),
+            "character" = 
+              {
+                switch(num[1],
+                  "best" = myrow <- 1,
+                  "worst" = myrow <- nrow(data),
+                  myrow <- NA
+                )
+              },
+            "numeric" = 
+              {
+                if (num%%1 == 0 & num > 0 & num <= nrow(data))
+                {
+                  myrow <- num
+                } else
+                {
+                  myrow <- NA
+                }
+              },
+            NA
+    )
+  } else
+  {
+    NA
+  }
   
+  unique(data$Hospital[myrow])
 }
 
 
