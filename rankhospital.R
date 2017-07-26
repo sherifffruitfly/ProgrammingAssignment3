@@ -119,7 +119,7 @@ rankhospital <- function(state, outcome, num = "best")
     myrows <- NA
   }
 
-  print(unique(data$Hospital[myrows]))
+  results <- unique(data$Hospital[myrows])
   #invisible(unique(data[myrows,]))
 }
 
