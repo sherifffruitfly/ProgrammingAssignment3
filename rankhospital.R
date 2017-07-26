@@ -65,36 +65,62 @@ rankhospital <- function(state, outcome, num = "best")
   # sort
   data <- data[order(data[, agg_col], data$Hospital),]
   
-  # return the proper row
+  # return the proper row(s)
+  myrows <- c()
   if (length(num) > 0)
   {
-    switch (class(num[1]),
+    switch (class(num),
             "character" = 
               {
-                switch(num[1],
-                  "best" = myrow <- 1,
-                  "worst" = myrow <- nrow(data),
-                  myrow <- NA
+                #message("in the character case")
+                switch(num,
+                  "best" = myrows <- 1,
+                  "worst" = myrows <- nrow(data),
+                  myrows <- NA
                 )
               },
             "numeric" = 
               {
-                if (num%%1 == 0 & num > 0 & num <= nrow(data))
+                #message("in the numeric case")
+                for (i in  num)
                 {
-                  myrow <- num
-                } else
-                {
-                  myrow <- NA
+                  if (i%%1 == 0 & i > 0 & i <= nrow(data))
+                  {
+                    myrows <- c(myrows, i)
+                  }
                 }
+                if (length(myrows) == 0) myrows <- NA
               },
-            NA
+            "integer" = 
+            {
+              #message("in the integer case")
+              for (i in  num)
+              {
+                if (i%%1 == 0 & i > 0 & i <= nrow(data))
+                {
+                  myrows <- c(myrows, i)
+                }
+              }
+              if (length(myrows) == 0) myrows <- NA
+            },
+            "NULL" = 
+            {
+              #message("in the null case")
+              myrows <- NA
+            },
+            {
+              #message("in the fallthru case")
+              myrows <- NA
+            }
     )
   } else
   {
-    NA
+    #message("in the len=0 case")
+    myrows <- NA
   }
-  
-  unique(data$Hospital[myrow])
+
+  print(unique(data$Hospital[myrows]))
+  #invisible(unique(data[myrows,]))
 }
 
 
